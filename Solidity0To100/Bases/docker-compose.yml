@@ -10,7 +10,7 @@ services:
     image: hardhat_dev_env # Nombre de la imagen que creará Docker Compose
     ports:
       - "8545:8545" # Expone el puerto del nodo al host
-    command: sh -c "npm install --save-dev hardhat && npx hardhat node --host 0.0.0.0" # Inicia el nodo
+    command: sh -c "npx hardhat node --host 0.0.0.0" # Inicia el nodo
 
   # Servicio para el despliegue de Hardhat (temporal)
   hardhat_deploy:
@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: Dockerfile.hardhat
     image: hardhat_dev_env # Reutilizamos la misma imagen
-    command: sh -c "npm install --save-dev hardhat && npx hardhat run scripts/deploy.js --network hardhat_node" # Aquí está la clave
+    command: sh -c "npx hardhat run scripts/deploy.js --network hardhat_node" # Aquí está la clave
     depends_on:
       - hardhat_node # Asegura que el nodo esté corriendo antes de intentar desplegar
     # No exponemos puertos para el servicio de despliegue si solo es para ejecutar el script
