@@ -1,0 +1,77 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "getMensaje",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "nuevo_mensaje",
+						"type": "string"
+					}
+				],
+				"name": "updateMensaje",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Solidity0To100/Bases/06a.hola_mundo.sol": "HolaMundo"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Solidity0To100/Bases/06a.hola_mundo.sol": {
+			"keccak256": "0x710d7c145dc1d11b031c7d9742cf7a5acbc012743ad18b2f79af5f09ef817f5d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://577dff95f589ce54843f64f533b4dd8cb45a5da45172269c47fc195f25b9f31d",
+				"dweb:/ipfs/QmWU2kem8aV45EBAFicXEuFRpfqfvc7KXCjjCicHh2zefu"
+			]
+		}
+	},
+	"version": 1
+}
