@@ -1,0 +1,65 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "n",
+						"type": "uint256"
+					}
+				],
+				"name": "esPrimo",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Solidity0To100/Bases/05.comentarios.sol": "Primos"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Solidity0To100/Bases/05.comentarios.sol": {
+			"keccak256": "0x95b67ad6b1c563e493f68e71a7e526ca283f29cdcef1c076a38d1b50f5c686dd",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://901f84f8375a6ad67386bcf56c6000cdf40ad793d84d6e25b92b39ff0380e1d6",
+				"dweb:/ipfs/Qma1f7N5bmqSuCr1LcjNVKzoeQ4Yyi7wSdp6n8AiiMQdLv"
+			]
+		}
+	},
+	"version": 1
+}
