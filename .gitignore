@@ -1,0 +1,11 @@
+# Dependencias de Node
+node_modules/
+npm-debug.log
+
+# Archivos de compilación
+artifacts/
+cache/
+build/
+dist/
+.states/
+.deps/
