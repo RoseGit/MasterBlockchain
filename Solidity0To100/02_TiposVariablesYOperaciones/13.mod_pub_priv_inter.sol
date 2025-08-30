@@ -1,5 +1,4 @@
 /*
-1:52
 Si añadimos el modificador public al declarar una variable, se creara una funcion getter (funcion que permite consultar su valor )
 
 <tipo_dato> [public]* <nombre_variable>
