@@ -5,6 +5,11 @@ import {Test} from "forge-std/Test.sol";
 import {stdError} from "forge-std/Test.sol";
 import {HolaMundo} from "../src/HolaMundo.sol";
 
+//para solo ejecutar las pruebas de un archivo en especifico 
+//  forge test --match-path test/HolaMundo.t.sol -vvv
+
+// Para mostrar el reporte de gas consumido 
+//  forge test --match-path test/HolaMundo.t.sol --gas-report
 contract HolaMundoTest is Test {
     HolaMundo public holaMundo;
 
