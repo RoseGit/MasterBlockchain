@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
-import {stdError} from "forge-std/Test.sol";
 import {HolaMundo} from "../src/HolaMundo.sol";
 
 //para solo ejecutar las pruebas de un archivo en especifico 
