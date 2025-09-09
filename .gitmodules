@@ -7,3 +7,6 @@
 [submodule "EntornosAvanzados/01_intro_foundry/lib/solmate"]
 	path = EntornosAvanzados/01_intro_foundry/lib/solmate
 	url = https://github.com/rari-capital/solmate
+[submodule "EntornosAvanzados/01_intro_foundry/lib/openzeppelin-contracts"]
+	path = EntornosAvanzados/01_intro_foundry/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
