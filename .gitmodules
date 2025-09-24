@@ -10,3 +10,6 @@
 [submodule "EntornosAvanzados/01_intro_foundry/lib/openzeppelin-contracts"]
 	path = EntornosAvanzados/01_intro_foundry/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "EntornosAvanzados/02_vulnerability/lib/forge-std"]
+	path = EntornosAvanzados/02_vulnerability/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
