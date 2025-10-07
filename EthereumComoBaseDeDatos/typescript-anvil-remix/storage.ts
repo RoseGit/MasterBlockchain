@@ -1,3 +1,8 @@
+/*
+Para ejecutar este ejemplo con nodejs 
+  npx ts-node storage.ts
+*/
+
 import { ethers } from "ethers";
 
 // 📌 Configuración: Direcciones y ABI del contrato
