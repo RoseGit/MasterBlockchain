@@ -1,0 +1,199 @@
+📌 Propósito del Código
+
+Este script se conecta a un contrato inteligente de almacenamiento simple (con funciones store y retrieve) desplegado en un nodo local de Ethereum (como Anvil o Hardhat Node).
+Su objetivo es:
+
+Leer el valor almacenado en el contrato.
+
+Actualizar ese valor enviando una transacción.
+
+Verificar que el cambio se haya aplicado correctamente.
+
+
+🔧 Componentes Clave
+
+1. Configuración Inicial
+
+const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Dirección del contrato desplegado
+const DEPLOYER_PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"; // Clave privada (ejemplo de Anvil)
+const RPC_URL = "http://localhost:8545"; // URL del nodo local
+const STORAGE_ABI = [ ... ]; // ABI del contrato (generado desde Remix)
+
+
+CONTRACT_ADDRESS: Dirección donde está desplegado el contrato (ejemplo: dirección predeterminada de Hardhat/Anvil).
+
+DEPLOYER_PRIVATE_KEY: Clave privada de la cuenta que interactuará con el contrato.
+⚠️ ¡Advertencia!: Nunca uses claves privadas reales en código público. Usa variables de entorno (process.env.PRIVATE_KEY) en producción.
+
+RPC_URL: URL del nodo Ethereum (aquí es local, pero podría ser Infura/Alchemy para redes públicas).
+
+STORAGE_ABI: Interfaz del contrato (ABI) que define cómo interactuar con sus funciones. Se genera al compilar el contrato en Remix o Hardhat.
+
+
+2. Conexión a la Red y al Contrato
+
+const provider = new ethers.JsonRpcProvider(RPC_URL); // Conecta al nodo
+const signer = new ethers.Wallet(DEPLOYER_PRIVATE_KEY, provider); // Crea un "firmante" con la clave privada
+const storageContract = new ethers.Contract(CONTRACT_ADDRESS, STORAGE_ABI, signer); // Instancia del contrato
+
+
+provider: Objeto que se conecta al nodo Ethereum (para leer datos de la blockchain).
+
+signer: Objeto que firma transacciones (necesario para escribir en la blockchain).
+
+storageContract: Instancia del contrato que permite llamar a sus funciones (store, retrieve).
+
+
+
+3. Lectura y Escritura en el Contrato
+
+// Lee el valor actual
+const currentValue = await storageContract.retrieve();
+console.log("Valor actual en el contrato:", currentValue.toString());
+
+// Envía una transacción para actualizar el valor
+const newValue = 123;
+console.log(`Almacenando nuevo valor: ${newValue}...`);
+const tx = await storageContract.store(newValue);
+await tx.wait(); // Espera a que la transacción se confirme
+console.log("Transacción confirmada en el bloque:", tx.blockNumber);
+
+// Verifica el nuevo valor
+const updatedValue = await storageContract.retrieve();
+console.log("Nuevo valor en el contrato:", updatedValue.toString());
+
+
+retrieve(): Función de lectura (no requiere gas, solo consulta el estado).
+
+store(newValue): Función de escritura (envía una transacción que modifica el estado, consume gas).
+
+tx.wait(): Espera a que la transacción sea minada y confirmada.
+
+Segunda llamada a retrieve(): Verifica que el valor se haya actualizado.
+
+
+
+4. Manejo de Errores
+
+try {
+  // ... código anterior ...
+} catch (error) {
+  console.error("Error:", error);
+}
+
+
+Captura errores como:
+
+Fallos en la conexión al nodo.
+
+Transacciones rechazadas (ejemplo: gas insuficiente).
+
+Errores en el contrato (ejemplo: require fallido).
+
+
+
+
+
+🚀 ¿Cómo Ejecutarlo?
+
+
+Requisitos:
+
+Tener un nodo local corriendo (ejemplo: anvil de Foundry o npx hardhat node).
+
+Contrato desplegado (dirección y ABI conocidos).
+
+Instalar dependencias:
+npm install ethers typescript ts-node
+
+
+
+
+Ejecución:
+npx ts-node storage.ts
+
+
+Salida Esperada:
+Conectado con la cuenta: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Valor actual en el contrato: 0
+Almacenando nuevo valor: 123...
+Transacción confirmada en el bloque: 1
+Nuevo valor en el contrato: 123
+
+
+
+
+⚠️ Buenas Prácticas y Advertencias
+
+
+
+Seguridad:
+
+
+
+Nunca expongas claves privadas en el código. Usa variables de entorno:
+import * as dotenv from "dotenv";
+dotenv.config();
+const DEPLOYER_PRIVATE_KEY = process.env.PRIVATE_KEY!;
+
+
+Para redes públicas, usa servicios como MetaMask, AWS KMS, o Hardware Wallets.
+
+
+
+
+Gas y Costos:
+
+
+
+En redes públicas, siempre estima el gas con contract.store.estimateGas() para evitar fallos.
+
+Usa tx.wait() para confirmar que la transacción se minó.
+
+
+
+
+ABI:
+
+
+
+El ABI debe coincidir exactamente con el contrato desplegado. Si cambias el contrato, actualiza el ABI.
+
+
+
+
+Alternativas:
+
+
+
+Para pruebas rápidas, usa Remix IDE con el plugin "Deploy & Run".
+
+Para proyectos grandes, considera Hardhat o Foundry para despliegues y tests automatizados.
+
+
+
+
+
+📝 Ejemplo del Contrato en Solidity (para contexto)
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract SimpleStorage {
+    uint256 private storedData;
+
+    function store(uint256 _newValue) public {
+        storedData = _newValue;
+    }
+
+    function retrieve() public view returns (uint256) {
+        return storedData;
+    }
+}
+
+
+store: Guarda un valor en la blockchain (consume gas).
+
+retrieve: Lee el valor (sin costo de gas).
+
+
