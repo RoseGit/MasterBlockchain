@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCrypto Wallet - Test App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .status {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .account-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .account-info p {
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .account-info strong {
+            color: #667eea;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button#disconnectBtn {
+            background: #dc3545;
+        }
+
+        button#disconnectBtn:hover {
+            background: #c82333;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .history {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .history-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #667eea;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .history-item .timestamp {
+            color: #999;
+            font-size: 0.75rem;
+        }
+
+        .history-item .type {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.3rem;
+        }
+
+        .history-item .content {
+            color: #333;
+            word-break: break-all;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .history::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .history::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .history::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .history::-webkit-scrollbar-thumb:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 CodeCrypto Wallet Test App</h1>
+
+        <div class="card">
+            <h2>1. Estado de Conexión</h2>
+            
+            <div id="walletDetectionStatus" class="status disconnected" style="margin-bottom: 1rem;">
+                🔍 Detectando wallets instaladas...
+            </div>
+            
+            <div id="walletInstructions" style="display: none; margin-bottom: 1rem; padding: 1rem; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                <p style="margin: 0 0 0.5rem 0; font-weight: bold; color: #856404;">⚠️ No se detectó ninguna wallet</p>
+                <p style="margin: 0 0 0.5rem 0; color: #856404; font-size: 0.9rem;">
+                    Esta dApp busca <code>window.codecrypto</code> o <code>window.ethereum</code> (como MetaMask).
+                </p>
+                <p style="margin: 0; color: #856404; font-size: 0.9rem;">
+                    <strong>Para usar CodeCrypto Wallet:</strong>
+                </p>
+                <ol style="margin: 0.5rem 0 0 1.5rem; color: #856404; font-size: 0.9rem;">
+                    <li>Abre <a href="http://localhost:5174/" target="_blank" style="color: #667eea; font-weight: bold;">http://localhost:5174/</a> en <strong>ESTA MISMA pestaña</strong></li>
+                    <li>Carga tu mnemonic de 12 palabras</li>
+                    <li>Luego abre esta URL (test.html) para probar</li>
+                </ol>
+                <p style="margin: 0.5rem 0 0 0; color: #856404; font-size: 0.85rem; font-style: italic;">
+                    Nota: window.codecrypto solo existe en la pestaña donde cargas la wallet (como una extensión real)
+                </p>
+            </div>
+            
+            <!-- Selector de wallet -->
+            <div id="walletSelector" style="display: none; margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">
+                    Selecciona una wallet:
+                </label>
+                <select id="walletSelect" style="width: 100%; padding: 0.8rem; border: 2px solid #667eea; border-radius: 6px; font-size: 1rem; background: white;">
+                    <option value="">-- Selecciona una wallet --</option>
+                </select>
+            </div>
+            
+            <div id="connectionStatus" class="status disconnected" style="display: none;">
+                Desconectado - Presiona "Conectar Wallet" para comenzar
+            </div>
+            <div id="accountInfo" class="account-info" style="display: none;">
+                <p><strong>Cuenta:</strong> <span id="accountAddress">-</span></p>
+                <p><strong>Balance:</strong> <span id="accountBalance">-</span> ETH</p>
+                <p><strong>Chain ID:</strong> <span id="chainId">-</span></p>
+            </div>
+            <button id="connectBtn" style="display: none;">Conectar Wallet</button>
+            <button id="disconnectBtn" style="display: none; background: #dc3545;">🔌 Desconectar Wallet</button>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>2. Enviar Transacción</h2>
+                <div class="form-group">
+                    <label>Dirección Destino:</label>
+                    <input type="text" id="txTo" placeholder="0x..." value="0x0000000000000000000000000000000000000000">
+                </div>
+                <div class="form-group">
+                    <label>Valor (ETH):</label>
+                    <input type="text" id="txValue" placeholder="0.1" value="0.01">
+                </div>
+                <button id="sendTxBtn" disabled>Enviar Transacción</button>
+                <div id="txResult"></div>
+            </div>
+
+            <div class="card">
+                <h2>3. Firmar Mensaje EIP-712</h2>
+                <div class="form-group">
+                    <label>Mensaje a firmar:</label>
+                    <textarea id="messageToSign" rows="4" placeholder="Mensaje...">Hola desde CodeCrypto Wallet</textarea>
+                </div>
+                <button id="signBtn" disabled>Firmar Mensaje EIP-712</button>
+                <div id="signResult"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>4. Cambiar Red</h2>
+            <button id="switchLocalBtn" disabled>Cambiar a Localhost (31337)</button>
+            <button id="switchSepoliaBtn" disabled>Cambiar a Sepolia (11155111)</button>
+        </div>
+
+        <div class="card">
+            <h2>5. Balance de la Cuenta</h2>
+            <p>El balance se actualiza automáticamente cada 5 segundos</p>
+            <button id="refreshBalanceBtn" disabled>Actualizar Balance Ahora</button>
+            <div id="balanceInfo" style="margin-top: 1rem;"></div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>6. Historial de Transacciones</h2>
+                <div id="txHistory" class="history">
+                    <p style="color: #999;">No hay transacciones aún</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>7. Historial de Mensajes Firmados</h2>
+                <div id="signHistory" class="history">
+                    <p style="color: #999;">No hay mensajes firmados aún</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let provider = null;
+        let currentAccount = null;
+        let txHistory = [];
+        let signHistory = [];
+        let availableWallets = {};
+        let selectedWalletKey = null;
+        let walletConnected = false;
+        let currentChainId = null;
+
+        // Referencias a elementos del DOM
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const sendTxBtn = document.getElementById('sendTxBtn');
+        const signBtn = document.getElementById('signBtn');
+        const switchLocalBtn = document.getElementById('switchLocalBtn');
+        const switchSepoliaBtn = document.getElementById('switchSepoliaBtn');
+        const refreshBalanceBtn = document.getElementById('refreshBalanceBtn');
+
+        // Función para mostrar alertas
+        function showAlert(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="alert ${type}">${message}</div>`;
+            setTimeout(() => {
+                element.innerHTML = '';
+            }, 5000);
+        }
+
+        // Función para agregar al historial de transacciones
+        function addTxToHistory(tx) {
+            txHistory.unshift({
+                timestamp: new Date().toLocaleString(),
+                ...tx
+            });
+            updateTxHistory();
+        }
+
+        // Función para actualizar el historial de transacciones
+        function updateTxHistory() {
+            const historyDiv = document.getElementById('txHistory');
+            if (txHistory.length === 0) {
+                historyDiv.innerHTML = '<p style="color: #999;">No hay transacciones aún</p>';
+                return;
+            }
+            historyDiv.innerHTML = txHistory.map(tx => `
+                <div class="history-item">
+                    <div class="timestamp">${tx.timestamp}</div>
+                    <div class="type">Transacción</div>
+                    <div class="content">
+                        <strong>To:</strong> ${tx.to}<br>
+                        <strong>Value:</strong> ${tx.value} ETH<br>
+                        <strong>Hash:</strong> ${tx.hash || 'Pendiente...'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Función para agregar al historial de firmas
+        function addSignToHistory(sign) {
+            signHistory.unshift({
+                timestamp: new Date().toLocaleString(),
+                ...sign
+            });
+            updateSignHistory();
+        }
+
+        // Función para actualizar el historial de firmas
+        function updateSignHistory() {
+            const historyDiv = document.getElementById('signHistory');
+            if (signHistory.length === 0) {
+                historyDiv.innerHTML = '<p style="color: #999;">No hay mensajes firmados aún</p>';
+                return;
+            }
+            historyDiv.innerHTML = signHistory.map(sign => `
+                <div class="history-item">
+                    <div class="timestamp">${sign.timestamp}</div>
+                    <div class="type">Firma EIP-712</div>
+                    <div class="content">
+                        <strong>Mensaje:</strong> ${sign.message}<br>
+                        <strong>Firma:</strong> ${sign.signature.slice(0, 20)}...${sign.signature.slice(-20)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Función para actualizar el balance
+        async function updateBalance() {
+            if (!provider || !currentAccount) return;
+            
+            try {
+                const balanceHex = await provider.request({
+                    method: 'eth_getBalance',
+                    params: [currentAccount, 'latest']
+                });
+                
+                const balanceWei = parseInt(balanceHex, 16);
+                const balanceEth = (balanceWei / 1e18).toFixed(6);
+                
+                document.getElementById('accountBalance').textContent = balanceEth;
+                document.getElementById('balanceInfo').innerHTML = `
+                    <div class="alert success">
+                        <strong>Balance actualizado:</strong> ${balanceEth} ETH
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error actualizando balance:', error);
+                document.getElementById('balanceInfo').innerHTML = `
+                    <div class="alert error">
+                        Error actualizando balance: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Conectar con la wallet (igual para codecrypto que para ethereum)
+        connectBtn.addEventListener('click', async () => {
+            try {
+                // Verificar si el proveedor está disponible
+                if (!provider) {
+                    showAlert('txResult', 'Por favor selecciona una wallet primero.', 'error');
+                    return;
+                } 
+
+                console.log('🔌 Conectando con wallet...', selectedWalletKey);
+                console.log('Provider:', provider);
+
+                // Solicitar cuentas (igual para todas las wallets)
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
+                currentAccount = accounts[0];
+                console.log('✅ Cuenta obtenida:', currentAccount);
+
+                // Obtener chain ID
+                currentChainId = await provider.request({ method: 'eth_chainId' });
+                console.log('✅ Chain ID obtenido:', currentChainId);
+
+                // Marcar como conectado
+                walletConnected = true;
+
+                // Obtener nombre de la wallet
+                const walletName = selectedWalletKey && availableWallets[selectedWalletKey] 
+                    ? availableWallets[selectedWalletKey].name 
+                    : 'Wallet';
+
+                // Actualizar UI
+                document.getElementById('connectionStatus').className = 'status connected';
+                document.getElementById('connectionStatus').textContent = `✓ Conectado a ${walletName}`;
+                document.getElementById('accountInfo').style.display = 'block';
+                document.getElementById('accountAddress').textContent = currentAccount;
+                document.getElementById('chainId').textContent = `${currentChainId} (${parseInt(currentChainId, 16)})`;
+                
+                // Ocultar detección, selector y botón conectar
+                document.getElementById('walletDetectionStatus').style.display = 'none';
+                document.getElementById('walletSelector').style.display = 'none';
+                connectBtn.style.display = 'none';
+                
+                // Mostrar botón de desconectar
+                disconnectBtn.style.display = 'inline-block';
+
+                // Habilitar botones
+                sendTxBtn.disabled = false;
+                signBtn.disabled = false;
+                switchLocalBtn.disabled = false;
+                switchSepoliaBtn.disabled = false;
+                refreshBalanceBtn.disabled = false;
+
+                // Actualizar balance
+                await updateBalance();
+
+                // Configurar listeners de eventos (igual para todas las wallets)
+                if (provider.on) {
+                    provider.on('accountsChanged', (accounts) => {
+                        console.log('📢 Evento accountsChanged:', accounts);
+                        if (accounts.length === 0) {
+                            // Wallet desconectada
+                            console.log('⚠️ Wallet desconectada');
+                            location.reload();
+                        } else {
+                            currentAccount = accounts[0];
+                            document.getElementById('accountAddress').textContent = currentAccount;
+                            updateBalance();
+                            showAlert('txResult', `Cuenta cambiada a: ${currentAccount}`, 'info');
+                        }
+                    });
+
+                    provider.on('chainChanged', (chainId) => {
+                        console.log('📢 Evento chainChanged:', chainId);
+                        currentChainId = chainId;
+                        document.getElementById('chainId').textContent = `${chainId} (${parseInt(chainId, 16)})`;
+                        updateBalance();
+                        showAlert('txResult', `Red cambiada a: ${parseInt(chainId, 16)}`, 'info');
+                    });
+                }
+
+                // Polling de balance cada 5 segundos
+                setInterval(updateBalance, 5000);
+
+                console.log('✅ Conectado exitosamente a', walletName);
+                showAlert('balanceInfo', `Conectado exitosamente a ${walletName}`, 'success');
+
+            } catch (error) {
+                console.error('❌ Error conectando:', error);
+                showAlert('txResult', `Error conectando: ${error.message}`, 'error');
+            }
+        });
+
+        // Desconectar wallet
+        disconnectBtn.addEventListener('click', async () => {
+            console.log('🔌 Desconectando wallet...');
+            
+            try {
+                // Marcar como desconectado
+                walletConnected = false;
+                
+                // Resetear variables
+                provider = null;
+                currentAccount = null;
+                currentChainId = null;
+                selectedWalletKey = null;
+                
+                // Actualizar UI - Ocultar información de cuenta
+                document.getElementById('connectionStatus').className = 'status disconnected';
+                document.getElementById('connectionStatus').textContent = 'Desconectado - Presiona "Conectar Wallet" para comenzar';
+                document.getElementById('connectionStatus').style.display = 'block';
+                document.getElementById('accountInfo').style.display = 'none';
+                
+                // Ocultar botón de desconectar, mostrar selector y botón de conectar
+                disconnectBtn.style.display = 'none';
+                document.getElementById('walletDetectionStatus').style.display = 'block';
+                document.getElementById('walletSelector').style.display = 'block';
+                connectBtn.style.display = 'inline-block';
+                
+                // Deshabilitar botones de funcionalidad
+                sendTxBtn.disabled = true;
+                signBtn.disabled = true;
+                switchLocalBtn.disabled = true;
+                switchSepoliaBtn.disabled = true;
+                refreshBalanceBtn.disabled = true;
+                
+                // Limpiar campos
+                document.getElementById('accountAddress').textContent = '-';
+                document.getElementById('accountBalance').textContent = '-';
+                document.getElementById('chainId').textContent = '-';
+                
+                // Re-detectar wallets disponibles
+                setTimeout(detectAvailableWallets, 100);
+                
+                console.log('✅ Desconectado exitosamente');
+                showAlert('balanceInfo', 'Desconectado de la wallet', 'info');
+                
+            } catch (error) {
+                console.error('❌ Error desconectando:', error);
+                showAlert('txResult', `Error desconectando: ${error.message}`, 'error');
+            }
+        });
+
+        // Enviar transacción
+        sendTxBtn.addEventListener('click', async () => {
+            try {
+                const to = document.getElementById('txTo').value;
+                const valueEth = document.getElementById('txValue').value;
+                
+                if (!to || !valueEth) {
+                    showAlert('txResult', 'Por favor completa todos los campos', 'error');
+                    return;
+                }
+
+                // Convertir ETH a Wei (hex)
+                const valueWei = Math.floor(parseFloat(valueEth) * 1e18);
+                const valueHex = '0x' + valueWei.toString(16);
+
+                const tx = {
+                    from: currentAccount,
+                    to: to,
+                    value: valueHex,
+                    gas: '0x5208' // 21000
+                };
+
+                showAlert('txResult', 'Esperando aprobación...', 'info');
+
+                const txHash = await provider.request({
+                    method: 'eth_sendTransaction',
+                    params: [tx]
+                });
+
+                addTxToHistory({
+                    to: to,
+                    value: valueEth,
+                    hash: txHash
+                });
+
+                showAlert('txResult', `Transacción enviada! Hash: ${txHash}`, 'success');
+            } catch (error) {
+                console.error('Error enviando transacción:', error);
+                showAlert('txResult', `Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Firmar mensaje EIP-712
+        signBtn.addEventListener('click', async () => {
+            try {
+                const message = document.getElementById('messageToSign').value;
+                
+                if (!message) {
+                    showAlert('signResult', 'Por favor ingresa un mensaje', 'error');
+                    return;
+                }
+
+                // Crear estructura EIP-712
+                const typedData = {
+                    domain: {
+                        name: 'CodeCrypto Test App',
+                        version: '1',
+                        chainId: parseInt(await provider.request({ method: 'eth_chainId' }), 16),
+                        verifyingContract: '0x0000000000000000000000000000000000000000'
+                    },
+                    types: {
+                        Message: [
+                            { name: 'content', type: 'string' },
+                            { name: 'timestamp', type: 'uint256' }
+                        ]
+                    },
+                    primaryType: 'Message',
+                    message: {
+                        content: message,
+                        timestamp: Math.floor(Date.now() / 1000)
+                    }
+                };
+
+                showAlert('signResult', 'Esperando firma...', 'info');
+
+                const signature = await provider.request({
+                    method: 'eth_signTypedData_v4',
+                    params: [currentAccount, JSON.stringify(typedData)]
+                });
+
+                addSignToHistory({
+                    message: message,
+                    signature: signature
+                });
+
+                showAlert('signResult', `Mensaje firmado! Firma: ${signature.slice(0, 20)}...`, 'success');
+            } catch (error) {
+                console.error('Error firmando mensaje:', error);
+                showAlert('signResult', `Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Cambiar a Localhost
+        switchLocalBtn.addEventListener('click', async () => {
+            try {
+                await provider.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x7a69' }]
+                });
+                showAlert('txResult', 'Red cambiada a Localhost (31337)', 'success');
+            } catch (error) {
+                console.error('Error cambiando red:', error);
+                showAlert('txResult', `Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Cambiar a Sepolia
+        switchSepoliaBtn.addEventListener('click', async () => {
+            try {
+                await provider.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0xaa36a7' }]
+                });
+                showAlert('txResult', 'Red cambiada a Sepolia (11155111)', 'success');
+            } catch (error) {
+                console.error('Error cambiando red:', error);
+                showAlert('txResult', `Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Actualizar balance manualmente
+        refreshBalanceBtn.addEventListener('click', updateBalance);
+
+        // Detectar eventos EIP-6963
+        window.addEventListener('eip6963:announceProvider', (event) => {
+            // Ignorar si ya estamos conectados
+            if (walletConnected) {
+                console.log('ℹ️ Ignorando evento eip6963:announceProvider - Ya conectado');
+                return;
+            }
+            
+            console.log('📢 Proveedor EIP-6963 detectado:', event.detail);
+            showAlert('balanceInfo', `Proveedor detectado: ${event.detail.info.name}`, 'success');
+            
+            // Re-detectar wallets cuando se anuncia un nuevo proveedor
+            setTimeout(detectAvailableWallets, 100);
+        });
+
+        // Detectar wallets disponibles (como window.ethereum)
+        function   detectAvailableWallets() {
+            // Si ya está conectado, no hacer nada
+            if (walletConnected) {
+                return true;
+            }
+
+            const detectionStatus = document.getElementById('walletDetectionStatus');
+            const walletSelector = document.getElementById('walletSelector');
+            const walletSelect = document.getElementById('walletSelect');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectBtn = document.getElementById('connectBtn');
+            const walletInstructions = document.getElementById('walletInstructions');
+            
+            // Guardar selección actual antes de limpiar
+            const currentSelection = walletSelect.value;
+            
+            availableWallets = {};
+            walletSelect.innerHTML = '<option value="">-- Selecciona una wallet --</option>';
+
+            // Detectar CodeCrypto (igual que window.ethereum)
+            if (window.codecrypto) {
+                availableWallets['codecrypto'] = {
+                    name: 'CodeCrypto Wallet',
+                    provider: window.codecrypto
+                };
+                const option = document.createElement('option');
+                option.value = 'codecrypto';
+                option.textContent = '🔐 CodeCrypto Wallet';
+                walletSelect.appendChild(option);
+                console.log('✅ CodeCrypto Wallet detectada');
+            }
+
+            // Detectar MetaMask
+            if (window.ethereum?.isMetaMask) {
+                availableWallets['metamask'] = {
+                    name: 'MetaMask',
+                    provider: window.ethereum
+                };
+                const option = document.createElement('option');
+                option.value = 'metamask';
+                option.textContent = '🦊 MetaMask';
+                walletSelect.appendChild(option);
+                console.log('✅ MetaMask detectada');
+            }
+
+            // Detectar otros proveedores Ethereum
+            if (window.ethereum && !window.ethereum.isMetaMask && !window.codecrypto) {
+                availableWallets['ethereum'] = {
+                    name: 'Ethereum Provider',
+                    provider: window.ethereum
+                };
+                const option = document.createElement('option');
+                option.value = 'ethereum';
+                option.textContent = '⚡ Ethereum Provider';
+                walletSelect.appendChild(option);
+                console.log('✅ Ethereum Provider detectado');
+            }
+
+            const walletCount = Object.keys(availableWallets).length;
+            console.log(`📊 Total wallets detectadas: ${walletCount}`, Object.keys(availableWallets));
+            
+            if (walletCount > 0) {
+                detectionStatus.className = 'status connected';
+                detectionStatus.textContent = `✅ ${walletCount} wallet(s) detectada(s)`;
+                walletInstructions.style.display = 'none';
+                
+                if (walletCount > 1) {
+                    // Múltiples wallets - mostrar selector
+                    walletSelector.style.display = 'block';
+                    
+                    // Restaurar selección previa si existe
+                    if (selectedWalletKey && availableWallets[selectedWalletKey]) {
+                        walletSelect.value = selectedWalletKey;
+                        provider = availableWallets[selectedWalletKey].provider;
+                        connectionStatus.style.display = 'block';
+                        connectionStatus.textContent = `${availableWallets[selectedWalletKey].name} seleccionada - Presiona Conectar`;
+                        connectBtn.style.display = 'block';
+                    } else if (currentSelection && availableWallets[currentSelection]) {
+                        walletSelect.value = currentSelection;
+                        selectedWalletKey = currentSelection;
+                        provider = availableWallets[currentSelection].provider;
+                        connectionStatus.style.display = 'block';
+                        connectionStatus.textContent = `${availableWallets[currentSelection].name} seleccionada - Presiona Conectar`;
+                        connectBtn.style.display = 'block';
+                    } else {
+                        connectionStatus.style.display = 'none';
+                        connectBtn.style.display = 'none';
+                    }
+                } else {
+                    // Solo una wallet - auto-seleccionar
+                    const walletKey = Object.keys(availableWallets)[0];
+                    selectedWalletKey = walletKey;
+                    provider = availableWallets[walletKey].provider;
+                    walletSelector.style.display = 'none';
+                    connectionStatus.style.display = 'block';
+                    connectionStatus.textContent = `${availableWallets[walletKey].name} detectada - Presiona Conectar`;
+                    connectBtn.style.display = 'block';
+                }
+                
+                return true;
+            } else {
+                detectionStatus.className = 'status disconnected';
+                detectionStatus.textContent = '❌ No se detectaron wallets instaladas';
+                walletInstructions.style.display = 'block';
+                walletSelector.style.display = 'none';
+                connectionStatus.style.display = 'none';
+                connectBtn.style.display = 'none';
+                return false;
+            }
+        }
+
+
+        // Selector de wallet
+        document.getElementById('walletSelect').addEventListener('change', (e) => {
+            const walletKey = e.target.value;
+            console.log('Wallet seleccionada:', walletKey);
+            
+            if (walletKey && availableWallets[walletKey]) {
+                selectedWalletKey = walletKey;
+                provider = availableWallets[walletKey].provider;
+                
+                const connectionStatus = document.getElementById('connectionStatus');
+                const connectBtn = document.getElementById('connectBtn');
+                
+                connectionStatus.style.display = 'block';
+                connectionStatus.className = 'status disconnected';
+                connectionStatus.textContent = `${availableWallets[walletKey].name} seleccionada - Presiona Conectar`;
+                connectBtn.style.display = 'block';
+                
+                console.log('✅ Provider seleccionado:', provider);
+            } else {
+                selectedWalletKey = null;
+                provider = null;
+                document.getElementById('connectionStatus').style.display = 'none';
+                document.getElementById('connectBtn').style.display = 'none';
+            }
+        });
+
+        // Detectar al cargar la página
+        console.log('🔍 Detectando wallets al cargar...');
+        console.log('window.codecrypto:', window.codecrypto);
+        console.log('window.ethereum:', window.ethereum);
+        detectAvailableWallets();
+
+        // Verificar periódicamente (solo si no está conectado)
+        // Esto permite detectar cuando se carga la wallet después
+        setInterval(() => {
+            if (!walletConnected) {
+                detectAvailableWallets();
+            }
+        }, 2000);
+
+        // Al cargar la página
+        console.log('🔐 Test App cargada');
+        console.log('📢 Detectando wallets instaladas...');
+        console.log('💡 Para conectar una wallet:');
+        console.log('   - CodeCrypto Wallet: Abre http://localhost:5174/ y carga tu mnemonic');
+        console.log('   - MetaMask: Instala la extensión desde metamask.io');
+        console.log('');
+        console.log('ℹ️ test.html trata window.codecrypto exactamente igual que window.ethereum');
+        console.log('   → Ambos son proveedores EIP-1193 estándar');
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,191 @@
+
+empezamos otra vez
+
+
+cuando arranca la wallet en cargar Wallet no hace nada. poner console log para ir viendo 
+
+
+quita el bip 39 y usa ethers solo
+
+
+main-B-OPxT4J.js:52 Stack: TypeError: cannot derive root path (i.e. path starting with "m/") for a node at non-zero depth 5 (argument="path", value="m/44'/60'/0'/0/0", code=INVALID_ARGUMENT, version=6.15.0)
+    at $t (chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:49:39175)
+    at I (chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:49:39411)
+    at v (chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:49:39441)
+    at My (chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:52:51467)
+    at Yn.derivePath (chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:52:53510)
+    at J (chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:52:57097)
+    at onClick (chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:52:63275)
+    at n1 (chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:48:127581)
+    at chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:48:132707
+    at ch (chrome-extension://olpjfcpnbgdhggbdgljefhgejjhfobal/assets/main-B-OPxT4J.js:48:15120)
+
+
+el chainid de localhost:8545 es 31337
+
+
+reset la wallet y empezar con la frase de 12 palabras
+
+
+no esta bien calculado las address con la frase. revisar el uso del mnemonic
+
+
+poder hacer transfer entre cuentas
+
+
+en el test.html Desconectado - Presiona "Conectar Wallet" para comenzar. No siguiere elegir entre wallet
+
+
+en el test.html tengo instalada la extension pero no lo detecta no me permite elegir entre las wallet que tengo. 
+
+
+selecciono una wallet en el test pero no queda seleccionada. Selecciono me aparece un conectar que desaparece
+
+
+ hay que quitar lo de cofiguracion rapida ya que la extension esta configurada. Luego para firmar se ha de usar la la wallet. La wallet codecrypto es como el metamask. Quien firma es el metamask
+
+
+no detecta la wallet codecrypto
+
+
+en la extension solo pide la frase cuando se inicie por primera vez o haga reset. Graba los datos necesarios en el storage de la extension de chrome
+
+
+en el test.html trata el window.codecrypt como el window.ethereum y olvidate del localstorage y de los proxy
+
+
+creo que no se inyecta el objeto window.codecrypto desde la extension 
+
+
+cuando se conecta el test.html a la extension necesita la cuenta por defecto comfigurada en la extension. 
+Cuando en la extension cambiamo de cuenta en el desplegable no funciona el refresco.
+
+
+si cambio en la lista de wallet debo de cambiar la cuenta actual de la wallet
+
+
+cuando en el test se firma Error: This operation requires user approval. Please open the wallet popup. 
+
+
+hay que hacer un modal para ver lo que se firma y confirma en la wallet
+
+
+estos son errores que ya hemos tenido ❌ Error al cargar wallet: TypeError: cannot derive root path (i.e. path starting with "m/") for a node at non-zero depth 5 (argument="path", value="m/44'/60'/0'/0/0", code=INVALID_ARGUMENT, version=6.15.0)
+Stack: TypeError: cannot derive root path (i.e. path starting with "m/") for a node at non-zero depth 5 (argument="path", value="m/44'/60'/0'/0/0", code=INVALID_ARGUMENT, version=6.15.0)
+❌ RPC Error: Error: No accounts available
+❌ RPC Error: Error: This operation requires user approval. Please open the wallet popup.
+Uncaught SyntaxError: Identifier 'rpcUrl' has already been declared
+
+
+(Request timeout
+    at inject.js:56:18
+overrideMethod @ installHook.js:1
+(anonymous) @ test.html:538Understand this error
+test.html:707 
+
+
+Service worker registration failed. Status code: 15
+❌ Error al cargar wallet: TypeError: cannot derive root path (i.e. path starting with "m/") for a node at non-zero depth 5 (argument="path", value="m/44'/60'/0'/0/0", code=INVALID_ARGUMENT, version=6.15.0)
+Stack: TypeError: cannot derive root path (i.e. path starting with "m/") for a node at non-zero depth 5 (argument="path", value="m/44'/60'/0'/0/0", code=INVALID_ARGUMENT, version=6.15.0)
+❌ RPC Error: Error: No accounts available
+❌ RPC Error: Error: This operation requires user approval. Please open the wallet popup.
+
+
+en main ❌ RPC Error: Error: No accounts available
+❌ RPC Error: Error: This operation requires user approval. Please open the wallet popup.
+Uncaught SyntaxError: Identifier 'rpcUrl' has already been declared
+Uncaught SyntaxError: Identifier 'address' has already been declared
+Uncaught SyntaxError: Identifier 'address' has already been declared
+
+
+estos errores estan en main
+
+
+❌ RPC Error: Error: No accounts available
+❌ RPC Error: Error: This operation requires user approval. Please open the wallet popup.
+
+
+el regreso de la firma en el test es null
+
+
+la respuesta del tx hash al hacer la enviar tx sale null aunque la tx se hace, debe de ser un problema de de manejo de la respuesta
+
+
+en el inspect 🔑 Firmando con wallet: undefined
+main-DHpjR7Ak.js:52 ❌ Error firmando: Error: Wallet not loaded
+    at main-DHpjR7Ak.js:52:58659
+    at onClick (main-DHpjR7Ak.js:52:76501)
+    at i1 (main-DHpjR7Ak.js:48:127582)
+    at main-DHpjR7Ak.js:48:132708
+    at uh (main-DHpjR7Ak.js:48:15120)
+    at Kf (main-DHpjR7Ak.js:48:128816)
+    at s0 (main-DHpjR7Ak.js:49:28666)
+    at Z3 (main-DHpjR7Ak.js:49:28488)
+
+
+cuando solicito firmar se deberia lenvantar el popup en la wallet automaticamente
+
+
+hay timeout de Timeout esperando respuesta para: eth_getBalance
+
+
+cuando hago una tx o firmo despues aparecen timeout de chainid y de balance. 
+
+
+installHook.js:1 ⏰ Timeout esperando respuesta para: eth_requestAccounts
+
+installHook.js:1 ⏰ Timeout esperando respuesta para: eth_chainId
+installHook.js:1 ⏰ Timeout esperando respuesta para: eth_getBalance
+ no se que installHook
+
+
+la pagina de confirmacion deberia de ser independiente del popup de la extension
+
+
+formatea mejor el json de la notificacion y centralo. No llego a ver la signature en la dapp
+
+
+centr la notificacion en la pagina
+
+
+revisa el codigo que has realizado y todos los markdown y escribe un documento que se llame tarea para estudiante que describa la construccion del proyecto, tanto la wallet como el test con todo detalle y al principio comentando que este trabajo es el que tienen que hacer
+
+
+hacer en el folder viewextensiondata un typescript para visualizar la base de datos level db que hay en la extension /Users/joseviejo/Library/Application Support/Google/Chrome/Default/Local Extension Settings/olpjfcpnbgdhggbdgljefhgejjhfobal
+
+
+leelo en modo lectura para 
+
+
+extraer todo lo que ha escrito el User
+
+
+hay que hacer una pagina para la conexion a la wallet donde aparezcan las cuentas y poder seleccionar la activa para la web. Esto se hara como se ha hecho la pagina de la notificacion para confirmar.
+
+
+cambiar tareaa_para_estudiante.md con los ultimos cambios de conectar
+
+
+en el popup de la extension no se puede usar el ethers para hacer operaciones. Hay que enviar mensajes al service provider para ello. Modifica para hacer llamadas y recibir las respuesta del service provider.
+
+
+Refused to load the script 'https://cdn.ethers.io/lib/ethers-5.7.umd.min.js' because it violates the following Content Security Policy directive: "script-src 'self'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. No puedes usar un cdn en un service provider
+
+
+Uncaught SyntaxError: Cannot use import statement outside a module en service provider
+
+
+puedes pasar el @content-script.js y el @inject.js  a la aplicacion vite para hacer lo mismo que con el background.js
+
+
+puedes meter el @manifest.json 
+
+
+no se donde se ha la firma eip 712 en el codigo del background.ts
+
+
+por que haces un fetch en case 'eth_getBalance':
+
+
+actualiza el @TAREA_PARA_ESTUDIANTE.md con los cambios realizados.
+
