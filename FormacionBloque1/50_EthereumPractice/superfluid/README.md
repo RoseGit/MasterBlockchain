@@ -1,0 +1,297 @@
+# Superfluid EUR Streaming Application
+
+Aplicacion de streaming de dinero en tiempo real usando el protocolo Superfluid. Permite enviar flujos continuos de tokens EUR a multiples destinatarios a una tasa de 2000 EUR/mes.
+
+## Requisitos Previos
+
+- Node.js 18+ y npm
+- Foundry (forge, anvil, cast)
+- Git
+- Alchemy API Key (para fork de mainnet)
+
+## Instalacion
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/codecrypto-academy/superfluid.git
+   cd superfluid
+   ```
+
+2. **Instalar dependencias de smart contracts**
+   ```bash
+   cd sc
+   forge install
+   cd ..
+   ```
+
+3. **Instalar dependencias de la web app**
+   ```bash
+   cd web
+   npm install
+   cd ..
+   ```
+
+## Configuracion
+
+### 1. Obtener Alchemy API Key
+
+1. Crear cuenta en [Alchemy](https://www.alchemy.com/)
+2. Crear una app para Ethereum Mainnet
+3. Copiar el API Key
+
+### 2. Configurar variables de entorno (opcional)
+
+Crear archivo `web/.env.local`:
+```bash
+NEXT_PUBLIC_ANVIL_RPC_URL=http://127.0.0.1:8545
+```
+
+## Ejecucion del Proyecto
+
+### Paso 1: Levantar Anvil con Fork de Mainnet
+
+En una terminal, ejecutar:
+
+```bash
+anvil --fork-url https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_API_KEY
+```
+
+**Importante**: Reemplaza `YOUR_ALCHEMY_API_KEY` con tu API key de Alchemy.
+
+Anvil levantara un nodo local en `http://127.0.0.1:8545` con el estado de mainnet. Veras 10 cuentas con 10,000 ETH cada una.
+
+### Paso 2: Desplegar Contratos
+
+En otra terminal, desde la raiz del proyecto:
+
+```bash
+cd sc && forge script script/DeployAll.s.sol:DeployAllScript \
+  --rpc-url http://127.0.0.1:8545 \
+  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+  --broadcast
+```
+
+Este script:
+- Despliega el contrato Euro (ERC20)
+- Mintea 10,000,000 EUR a la cuenta principal
+- Crea el Super Token EURx usando la factory de Superfluid
+
+**Output esperado**:
+```
+==========================
+Deployment Summary
+==========================
+Euro Token deployed at: 0x...
+EuroX SuperToken created at: 0x...
+Initial holder: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Initial supply: 10000000 EUR
+
+Next steps:
+1. Update web/src/config/web3.ts with these addresses
+2. Start the web app: cd web && npm run dev
+```
+
+### Paso 3: Actualizar Configuracion Web
+
+Copiar las direcciones de los contratos desplegados y actualizarlas en `web/src/config/web3.ts`:
+
+```typescript
+export const euroAddress = '0x...'; // Euro Token address del output anterior
+export const euroXAddress = '0x...'; // EuroX SuperToken address del output anterior
+```
+
+### Paso 4: Iniciar Aplicacion Web
+
+En otra terminal:
+
+```bash
+cd web
+npm run dev
+```
+
+La aplicacion estara disponible en `http://localhost:3000` (o puerto alternativo si 3000 esta ocupado).
+
+## Uso de la Aplicacion
+
+### 1. Conectar Wallet
+
+No usaremos Metamask, usaremos la cuenta de Anvil directamente.
+
+### 2. Hacer Upgrade EUR a EURx
+
+Para poder hacer streaming, primero debes convertir EUR (ERC20 normal) a EURx (Super Token):
+
+1. En la seccion "Upgrade EUR a EURx"
+2. Ingresa cantidad (ejemplo: 5000)
+3. Haz clic en "Upgrade"
+4. Espera confirmacion de aprobacion
+5. Espera confirmacion de upgrade
+
+Ahora tendras 5000 EURx listos para streaming.
+
+### 3. Agregar Destinatario y Crear Stream
+
+1. En la seccion "Agregar Destinatario"
+2. Ingresa una address de Ethereum (puedes usar otra cuenta de Anvil)
+3. Haz clic en "Agregar"
+
+**Cuentas de Anvil disponibles**:
+```
+0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
+0x90F79bf6EB2c4f870365E785982E1f101E93b906
+```
+
+Se creara automaticamente un stream de 2000 EUR/mes hacia esa address.
+
+### 4. Ver Balance en Tiempo Real
+
+El balance del destinatario se actualiza cada 5 segundos, mostrando como los tokens fluyen continuamente.
+
+### 5. Pausar y Reanudar Streams
+
+- **Pausar**: Haz clic en el boton "Pausar" para detener el flujo
+- **Reanudar**: Haz clic en el boton "Reanudar" para continuar el flujo
+
+### 6. Downgrade EURx a EUR (opcional)
+
+Si necesitas convertir Super Tokens de vuelta a tokens normales:
+
+1. En la seccion "Downgrade EURx a EUR"
+2. Ingresa cantidad
+3. Haz clic en "Downgrade"
+
+## Estructura del Proyecto
+
+```
+superfluid/
+├── sc/                          # Smart contracts (Foundry)
+│   ├── src/
+│   │   └── Euro.sol            # Token ERC20 EUR
+│   ├── script/
+│   │   ├── DeployEuro.s.sol    # Script deploy Euro
+│   │   └── DeployAll.s.sol     # Script deploy completo
+│   ├── test/
+│   │   └── Euro.t.sol          # Tests
+│   └── foundry.toml            # Config Foundry
+├── web/                         # Aplicacion Next.js
+│   ├── src/
+│   │   ├── app/                # Pages (App Router)
+│   │   ├── components/
+│   │   │   └── Dashboard.tsx   # Componente principal
+│   │   ├── lib/
+│   │   │   └── superfluid.ts   # Integracion Superfluid
+│   │   └── config/
+│   │       └── web3.ts         # Config contratos
+│   └── package.json
+├── CLAUDE.md                    # Instrucciones para Claude Code
+├── DEFINICION.md                # Definicion del proyecto para estudiantes
+└── README.md                    # Este archivo
+```
+
+## Comandos Utiles
+
+### Smart Contracts
+
+```bash
+# Compilar contratos
+cd sc && forge build
+
+# Ejecutar tests
+cd sc && forge test
+
+# Ejecutar tests con output detallado
+cd sc && forge test -vvv
+
+# Formatear codigo
+cd sc && forge fmt
+
+# Ver gas usado
+cd sc && forge snapshot
+```
+
+### Web Application
+
+```bash
+# Modo desarrollo
+cd web && npm run dev
+
+# Build produccion
+cd web && npm run build
+
+# Ejecutar produccion
+cd web && npm start
+
+# Linting
+cd web && npm run lint
+```
+
+## Troubleshooting
+
+### Anvil no esta corriendo
+```
+Error conectando a Anvil: connect ECONNREFUSED 127.0.0.1:8545
+```
+**Solucion**: Asegurate de que Anvil este corriendo en otra terminal.
+
+### Contratos no desplegados
+```
+El contrato EUR no existe en 0x...
+```
+**Solucion**: Ejecuta el script de deployment (Paso 2).
+
+### Error al crear flow
+```
+RPC request failed: execution reverted: custom error 0x801b6863
+```
+**Solucion**: Asegurate de tener suficiente balance en EURx (haz upgrade primero).
+
+### Port 3000 ocupado
+```
+Port 3000 is in use
+```
+**Solucion**: Next.js automaticamente usara el siguiente puerto disponible (3001, 3002, etc).
+
+## Conceptos Clave
+
+### Super Tokens
+Tokens ERC20 envueltos que tienen capacidades de streaming. Debes hacer "upgrade" de EUR a EURx para poder hacer streaming.
+
+### Flow Rate
+Los flows se miden en wei/segundo. Para 2000 EUR/mes:
+```
+2000 EUR/mes = 771604938271604 wei/segundo
+```
+
+### Constant Flow Agreement (CFA)
+Modulo de Superfluid que gestiona los streams. Los tokens fluyen automaticamente cada segundo sin necesidad de transacciones continuas.
+
+## Tecnologias
+
+- **Solidity 0.8.28** - Smart contracts
+- **Foundry** - Framework de desarrollo blockchain
+- **OpenZeppelin 5.1.0** - Libreria de contratos seguros
+- **Next.js 15.5.4** - Framework frontend
+- **React 19.1.0** - Libreria UI
+- **Tailwind CSS 3.4** - Estilos
+- **ethers.js 5.7.2** - Libreria Web3
+- **Superfluid SDK 0.9.0** - SDK del protocolo
+
+## Recursos
+
+- [Documentacion Superfluid](https://docs.superfluid.finance/)
+- [Foundry Book](https://book.getfoundry.sh/)
+- [Next.js Docs](https://nextjs.org/docs)
+- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
+
+## Licencia
+
+Este proyecto es de codigo abierto y esta disponible para fines educativos.
+
+## Autor
+
+Desarrollado con fines educativos para **CodeCrypto Academy**
+
+---
+
+Para mas informacion sobre el proyecto, consulta [DEFINICION.md](DEFINICION.md)
