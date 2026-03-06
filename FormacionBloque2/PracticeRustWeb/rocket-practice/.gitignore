@@ -1,0 +1,24 @@
+# --- Compilación y Binarios ---
+# Ignora la carpeta donde Cargo guarda los artefactos de compilación
+/target/
+
+# --- Archivos de Bloqueo (Locks) ---
+# Si estás construyendo una aplicación (como este proyecto de Rocket), 
+# se recomienda incluir Cargo.lock en el repositorio. 
+# Si fuera una librería, podrías ignorarlo.
+# Cargo.lock
+
+# --- Entorno y Secretos ---
+# Rocket suele usar archivos .env para configuración sensible (DB_URL, llaves, etc.)
+.env
+*.env
+
+# --- Archivos de Respaldo y Herramientas ---
+# Archivos temporales de editores (Vim, VS Code, JetBrains)
+**/*.rs.bk
+.vscode/
+.idea/
+
+# --- Logs ---
+# Si Rocket o tu sistema de logging genera archivos locales
+*.log
