@@ -1,5 +1,3 @@
-use rocket::futures::io::ReadToString;
-
 #[macro_use] extern crate rocket;
 
 // Definimos la ruta GET básica
@@ -20,13 +18,28 @@ fn get_item(id: i32, name:String) -> String {
     format!("Has solicitado el ítem con el ID: {} and name: {}", id, name)
 }
 
+#[get("/items?<page>&<per_page>&<sort_by>")]
+fn get_items(page:Option<u32>, per_page:Option<u32>, sort_by:Option<String> ) -> String {    
+    let page = page.unwrap_or(1);
+    let per_page = per_page.unwrap_or(10);
+    let sort_by = sort_by.unwrap_or_else(|| String::from("id"));
+    
+    
+    format!(
+        "Listando items: Página {}, mostrando {} registros, ordenados por: '{}'",
+        page, per_page, sort_by
+    )
+}
+
+
+
 // Punto de entrada principal
 // #[launch] levanta el servidor como tal 
 // routes![index] index apunta realmente a la funcion fn index() -> &'static str 
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![index, hello, get_item]) // Registramos las rutas
+        .mount("/", routes![index, hello, get_item, get_items]) // Registramos las rutas
         //.mount("/api", routes![helloApi]) // Registramos las rutas con contexto /api
 }
 
