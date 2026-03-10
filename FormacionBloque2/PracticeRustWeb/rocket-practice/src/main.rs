@@ -1,4 +1,11 @@
 #[macro_use] extern crate rocket;
+use rocket::serde::{json::Json, Deserialize, Serialize};
+
+#[derive(Deserialize, Serialize)]
+struct Item {
+    name: String,
+    price: f64,
+}
 
 // Definimos la ruta GET básica
 #[get("/")]
@@ -31,6 +38,12 @@ fn get_items(page:Option<u32>, per_page:Option<u32>, sort_by:Option<String> ) ->
     )
 }
 
+// Ruta POST para crear un ítem
+#[post("/items", data = "<item>")]
+fn create_item(item: Json<Item>) -> String {
+    format!("Ítem recibido: {} con precio ${}", item.name, item.price)
+}
+
 
 
 // Punto de entrada principal
@@ -39,7 +52,7 @@ fn get_items(page:Option<u32>, per_page:Option<u32>, sort_by:Option<String> ) ->
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![index, hello, get_item, get_items]) // Registramos las rutas
+        .mount("/", routes![index, hello, get_item, get_items, create_item]) // Registramos las rutas
         //.mount("/api", routes![helloApi]) // Registramos las rutas con contexto /api
 }
 
