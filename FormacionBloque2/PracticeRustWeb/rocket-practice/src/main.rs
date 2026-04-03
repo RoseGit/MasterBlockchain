@@ -1,5 +1,6 @@
 #[macro_use] extern crate rocket;
 use rocket::serde::{json::Json, Deserialize, Serialize};
+use rocket::serde::json::{Value};
 
 #[derive(Deserialize, Serialize)]
 struct Item {
@@ -44,6 +45,16 @@ fn create_item(item: Json<Item>) -> String {
     format!("Ítem recibido: {} con precio ${}", item.name, item.price)
 }
 
+// Recibir un Json pero sin usar estructura 
+#[post("/raw-json", data = "<data>")]
+fn receive_any_json(data: Json<Value>) -> String {
+    // 'data' es ahora un objeto genérico. 
+    // Podemos intentar acceder a campos específicos de forma dinámica:
+    let nombre = data["name"].as_str().unwrap_or("Desconocido");
+    let edad = data["age"].as_i64().unwrap_or(0);
+
+    format!("Recibí un JSON dinámico. Nombre: {}, Edad: {}", nombre, edad)
+}
 
 
 // Punto de entrada principal
@@ -52,7 +63,7 @@ fn create_item(item: Json<Item>) -> String {
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![index, hello, get_item, get_items, create_item]) // Registramos las rutas
+        .mount("/", routes![index, hello, get_item, get_items, create_item, receive_any_json]) // Registramos las rutas
         //.mount("/api", routes![helloApi]) // Registramos las rutas con contexto /api
 }
 
